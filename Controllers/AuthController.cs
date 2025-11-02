@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using server.Models;
 using server.Services;
 using server.DTOs;
 namespace server.Controllers;
@@ -10,9 +9,9 @@ namespace server.Controllers;
     
     public class AuthController : ControllerBase
 {
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
 
-    public AuthController(AuthService auth)
+    public AuthController(IAuthService auth)
     {
         this._authService = auth;
     }
@@ -25,7 +24,7 @@ namespace server.Controllers;
             return BadRequest(ModelState);
         }
 
-        var result = await _authService.RegisterAsync(dto);
+        var result = await ((AuthService)_authService) .RegisterAsync(dto);
 
         if (result == null)
         {
@@ -46,7 +45,7 @@ namespace server.Controllers;
             return BadRequest(ModelState);
         }
 
-        var result = await _authService.LoginAsync(dto);
+        var result = await ((AuthService)_authService).LoginAsync(dto);
 
         if (result == null)
         {

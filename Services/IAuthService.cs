@@ -1,7 +1,9 @@
 using server.Models;
 
-namespace server.IAuthService;
-public interface ItokenService
+namespace server.Services;
+
+
+public interface IAuthService
 {
     string CreateToken(User user);
 }

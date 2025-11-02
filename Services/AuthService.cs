@@ -6,12 +6,11 @@ using MongoDB.Driver;
 using server.Data;
 using server.DTOs;
 using server.Models;
-using server.IAuthService;
 using Microsoft.EntityFrameworkCore;
 
 namespace server.Services;
 
-public class AuthService : ItokenService
+public class AuthService : IAuthService
 {
     private readonly IConfiguration _configuraiotn;
     private readonly ApplicationDbContext _context;
@@ -23,8 +22,8 @@ public class AuthService : ItokenService
     }
     public async Task<AuthresponsetDto> RegisterAsync(RegisterDto registerDto)
     {
-        bool emailExists = await _context.Users.AnyAsync(u => u.Email == registerDto.Email);
-        bool usernameExists = await _context.Users.AnyAsync(u => u.Username == registerDto.Username);
+        bool emailExists = await _context.users.AnyAsync(u => u.Email == registerDto.Email);
+        bool usernameExists = await _context.users.AnyAsync(u => u.Username == registerDto.Username);
 
         if (emailExists || usernameExists)
         {
@@ -41,7 +40,7 @@ public class AuthService : ItokenService
             CreatedAt = DateTime.UtcNow
         };
 
-        _context.Users.Add(user);
+        _context.users.Add(user);
         await _context.SaveChangesAsync();
 
         var token = CreateToken(user);
@@ -75,11 +74,10 @@ this._configuraiotn["JwtSettings:Key"]!
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
     
-
     public async Task<AuthresponsetDto> LoginAsync(LoginDto loginDto)
     {
 
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+        var user = await _context.users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
         if (user == null)
         {
             return null;
@@ -101,11 +99,5 @@ this._configuraiotn["JwtSettings:Key"]!
             Email = user.Email,
         };
     }
-
-    public async Task<bool> UserExistsAsync(string email)
-    {
-        // Your implementation
-        return false;
-    }
-
+  
 }
